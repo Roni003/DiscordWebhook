@@ -66,20 +66,16 @@ class EmbedBuilder:
         return {k: v for k, v in self.data.items() if v}
             
 class DiscordWebhook:
-    def __init__(self, url: str, content: str = "", username: str = "", avatarUrl: str = "") -> None:
+    def __init__(self, url: str, content: str = "", username: str = "", avatarUrl: str = "", tts: bool = False) -> None:
         self.url = url
         self.data = {
             'embeds': [],
             'content': content,
             'username': username,
             'avatarUrl': avatarUrl,
+            'tts': tts
         }
-
-    def setContent(self, content: str) -> None:
-        self.data['content'] = content
-
-    def setUsername(self, username: str) -> None:
-        self.data['username'] = username
+		
 
     def clearEmbeds(self) -> None:
         self.data['embeds'] = []
@@ -87,9 +83,18 @@ class DiscordWebhook:
     def addEmbed(self, embed: EmbedBuilder) -> None:
         if(len(self.data['embeds']) == 10): raise Exception("Cannot add more than 10 embeds to a request")
         self.data['embeds'].append(embed.getFiltered())
+        
+    def setContent(self, content: str) -> None:
+        self.data['content'] = content
+
+    def setUsername(self, username: str) -> None:
+        self.data['username'] = username
 
     def setAvatarUrl(self, avatarUrl: str) -> None:
         self.data['avatarUrl'] = avatarUrl
+    
+    def setTts(self, tts: bool) -> None:
+        self.data['tts'] = tts
 
     def getFiltered(self) -> Dict[str, Any]: # Returns data after filtering for empty values
         return {k: v for k, v in self.data.items() if v}
