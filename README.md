@@ -1,6 +1,6 @@
 # Discord webhooks simplified for Python
 
-Install dependency:
+Download DiscordWebhook.py & Install dependency:
 ```
 pip install requests
 ```
