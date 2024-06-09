@@ -1,7 +1,9 @@
 # Discord webhooks simplified for Python
 
-Helpful Discord webhook documentation: https://birdie0.github.io/discord-webhooks-guide/index.html
-
+Install dependency:
+```
+pip install requests
+```
 
 ## Create a webhook object
 ```python
@@ -39,3 +41,6 @@ webhook.addEmbed(EmbedBuilder()
 
 webhook.execute()
 ```
+
+### Helpful Discord webhook documentation: https://birdie0.github.io/discord-webhooks-guide/index.html
+
