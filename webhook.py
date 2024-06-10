@@ -94,7 +94,7 @@ class DiscordWebhook:
             if(not fileName): fileName = getNameFromPath(filePath) # Use the files name if there is no override
             self.files[fileName] = out
         except Exception as e:
-            print("Failed to add file to webhook " + e)
+            print(f"Request failed: {e}")
 
     def clearEmbeds(self) -> None:
         self.data['embeds'] = []
@@ -119,8 +119,8 @@ class DiscordWebhook:
         return {k: v for k, v in self.data.items() if v}
 
     def execute(self) -> bool:
-        if not self.data['embeds'] and not self.data['content']:
-            raise Exception("Request requires a content or embed field")
+        if not self.data['embeds'] and not self.data['content'] and not self.files:
+            raise Exception("Request requires a content, embed or file field")
 
         try:
             res = requests.post(self.url, json=self.getFiltered(), files=self.files)
