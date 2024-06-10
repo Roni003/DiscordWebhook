@@ -9,12 +9,16 @@ pip install requests
 ## Create a webhook object
 
 ```python
+from webhook import DiscordWebhook, EmbedBuilder
+
 # When initializing, the only required parameter is the webhook URL
 webhook = DiscordWebhook(url="https://discord.com/api/webhooks/example/1234", content="Hello world")
 
 # Due to Discord's implementation, the message content or embeds must be set before executing
 webhook.execute()
 ```
+![image](https://github.com/Roni003/DiscordWebhookPy/assets/61784529/5bbfbbaa-5d8d-4209-8f60-dfbef66a5cae)
+
 
 ## Set values when initializing or after
 
@@ -29,6 +33,8 @@ webhook.setUsername("John Doe")
 webhook.execute()
 webhook.execute()
 ```
+![image](https://github.com/Roni003/DiscordWebhookPy/assets/61784529/d201d535-4390-4650-8f36-ea2c6efd00eb)
+
 
 ## Send embeds
 
@@ -49,5 +55,6 @@ w.addEmbed(EmbedBuilder()
 
 w.execute()
 ```
+![image](https://github.com/Roni003/DiscordWebhookPy/assets/61784529/7285093a-779f-4494-aa93-c33c163e36df)
 
 ### Helpful Discord webhook documentation: https://birdie0.github.io/discord-webhooks-guide/index.html
