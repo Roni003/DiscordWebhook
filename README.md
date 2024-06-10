@@ -57,4 +57,19 @@ w.execute()
 ```
 ![image](https://github.com/Roni003/DiscordWebhookPy/assets/61784529/7285093a-779f-4494-aa93-c33c163e36df)
 
+```python
+webhook = DiscordWebhook(url="https://discord.com/api/webhooks/example/1234")
+
+# Add a file using a relative or absolute path, by default the file name sent is the same as the files name
+webhook.addFile(filePath="example_document.txt")
+
+# Add a file and override Its name to any name
+webhook.addFile(filePath="C:\\Users\\john\\OneDrive\\Desktop\\example_file.txt", fileName="new_name")
+
+webhook.execute()
+
+```
+![image](https://github.com/Roni003/DiscordWebhookPy/assets/61784529/8f500a40-4474-452d-ac54-c7061d90d6fd)
+
+
 ### Helpful Discord webhook documentation: https://birdie0.github.io/discord-webhooks-guide/index.html
