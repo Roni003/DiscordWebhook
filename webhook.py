@@ -20,7 +20,7 @@ class EmbedBuilder:
         self.data['color'] = color
         return self
 
-    def setAuthor(self, name: str, url: str, icon_url: str) -> Self:
+    def setAuthor(self, name: str = "", url: str = "", icon_url: str = "") -> Self:
         self.data['author'] = {
             "name": name or "",
             "url": url or "",
@@ -42,7 +42,7 @@ class EmbedBuilder:
         self.data['description'] = description
         return self
 
-    def addField(self, name: str, value: str, inline: bool = False) -> Self:
+    def addField(self, name: str = "", value: str = "", inline: bool = False) -> Self:
         self.data['fields'].append({'name': name, 'value': value, 'inline': inline})
         return self
 
@@ -54,7 +54,7 @@ class EmbedBuilder:
         self.data['thumbnail'] = {'url': thumbnailUrl}
         return self
 
-    def setFooter(self, text: str, iconUrl: str = None) -> Self:
+    def setFooter(self, text: str = "", iconUrl: str = "") -> Self:
         self.data['footer'] = {'text': text, 'icon_url': iconUrl}
         return self
 
