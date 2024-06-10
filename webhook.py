@@ -58,7 +58,10 @@ class EmbedBuilder:
         self.data['footer'] = {'text': text, 'icon_url': iconUrl}
         return self
 
-    def setTimestamp(self, timestamp: str) -> Self: # Format: "2015-12-31T12:00:00.000Z"
+    def setTimestamp(self, timestamp: str) -> Self: 
+        """
+        Format: "2015-12-31T12:00:00.000Z"
+        """
         self.data['timestamp'] = timestamp
         return self
 
@@ -68,6 +71,7 @@ class EmbedBuilder:
 class DiscordWebhook:
     def __init__(self, url: str, content: str = "", username: str = "", avatarUrl: str = "", tts: bool = False) -> None:
         self.url = url
+        self.files = {}
         self.data = {
             'embeds': [],
             'content': content,
@@ -75,7 +79,22 @@ class DiscordWebhook:
             'avatarUrl': avatarUrl,
             'tts': tts
         }
-		
+	
+    def addFile(self, filePath: str, fileName: str = "") -> None:
+        def getNameFromPath(filePath: str) -> str:
+            return filePath[filePath.rfind("\\") + 1:]
+        """
+        Args: 
+            filePath (str): The relative or absolute path of the file to be added
+        """
+        try:
+            f = open(filePath, "rb")
+            out = f.read()
+            f.close()
+            if(not fileName): fileName = getNameFromPath(filePath) # Use the files name if there is no override
+            self.files[fileName] = out
+        except Exception as e:
+            print("Failed to add file to webhook " + e)
 
     def clearEmbeds(self) -> None:
         self.data['embeds'] = []
@@ -95,7 +114,7 @@ class DiscordWebhook:
     
     def setTts(self, tts: bool) -> None:
         self.data['tts'] = tts
-
+        
     def getFiltered(self) -> Dict[str, Any]: # Returns data after filtering for empty values
         return {k: v for k, v in self.data.items() if v}
 
@@ -104,7 +123,7 @@ class DiscordWebhook:
             raise Exception("Request requires a content or embed field")
 
         try:
-            res = requests.post(self.url, json=self.getFiltered())
+            res = requests.post(self.url, json=self.getFiltered(), files=self.files)
             res.raise_for_status()
             return True
         except requests.exceptions.RequestException as e:
