@@ -1,4 +1,5 @@
 from typing import Any, Dict, Self
+import os
 import requests
 
 class EmbedBuilder:
@@ -82,7 +83,7 @@ class DiscordWebhook:
 	
     def addFile(self, filePath: str, fileName: str = "") -> None:
         def getNameFromPath(filePath: str) -> str:
-            return filePath[filePath.rfind("\\") + 1:]
+          return os.path.basename(filePath)
         """
         Args: 
             filePath (str): The relative or absolute path of the file to be added
