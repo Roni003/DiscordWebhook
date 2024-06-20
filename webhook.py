@@ -1,4 +1,4 @@
-from typing import Any, Dict, Self
+from typing import Any, Dict
 import os
 import requests
 import time
@@ -18,11 +18,11 @@ class EmbedBuilder:
             'timestamp': "",
         }
 
-    def setColor(self, color: str) -> Self:  # Discord uses decimal numeral system for colors not hex
+    def setColor(self, color: str) -> 'EmbedBuilder':  # Discord uses decimal numeral system for colors not hex
         self.data['color'] = color
         return self
 
-    def setAuthor(self, name: str = "", url: str = "", icon_url: str = "") -> Self:
+    def setAuthor(self, name: str = "", url: str = "", icon_url: str = "") -> 'EmbedBuilder':
         self.data['author'] = {
             "name": name or "",
             "url": url or "",
@@ -30,37 +30,37 @@ class EmbedBuilder:
 		}
         return self
 
-    def setTitle(self, title: str) -> Self:
+    def setTitle(self, title: str) -> 'EmbedBuilder':
         self.data['title'] = title
         return self
 
-    def setUrl(self, url: str) -> Self:
+    def setUrl(self, url: str) -> 'EmbedBuilder':
         self.data['url'] = url
         return self
 
-    def setDescription(self, description: str) -> Self:
+    def setDescription(self, description: str) -> 'EmbedBuilder':
         if len(description) >= 2000:
             raise Exception("Description cannot contain more than 2000 characters")
         self.data['description'] = description
         return self
 
-    def addField(self, name: str = "", value: str = "", inline: bool = False) -> Self:
+    def addField(self, name: str = "", value: str = "", inline: bool = False) -> 'EmbedBuilder':
         self.data['fields'].append({'name': name, 'value': value, 'inline': inline})
         return self
 
-    def setImage(self, imageUrl: str) -> Self:
+    def setImage(self, imageUrl: str) -> 'EmbedBuilder':
         self.data['image'] = {'url': imageUrl}
         return self
 
-    def setThumbnail(self, thumbnailUrl: str) -> Self:
+    def setThumbnail(self, thumbnailUrl: str) -> 'EmbedBuilder':
         self.data['thumbnail'] = {'url': thumbnailUrl}
         return self
 
-    def setFooter(self, text: str = "", iconUrl: str = "") -> Self:
+    def setFooter(self, text: str = "", iconUrl: str = "") -> 'EmbedBuilder':
         self.data['footer'] = {'text': text, 'icon_url': iconUrl}
         return self
 
-    def setTimestamp(self, timestamp: str) -> Self: 
+    def setTimestamp(self, timestamp: str) -> 'EmbedBuilder': 
         """
         Format: "2015-12-31T12:00:00.000Z"
         """
@@ -83,8 +83,6 @@ class DiscordWebhook:
         }
 	
     def addFile(self, filePath: str, fileName: str = "") -> None:
-        def getNameFromPath(filePath: str) -> str:
-          return os.path.basename(filePath)
         """
         Args: 
             filePath (str): The relative or absolute path of the file to be added
@@ -93,10 +91,11 @@ class DiscordWebhook:
             f = open(filePath, "rb")
             out = f.read()
             f.close()
-            if(not fileName): fileName = getNameFromPath(filePath) # Use the files name if there is no override
+            if(not fileName): fileName = os.path.basename(filePath) # Use the files name if there is no override
             self.files[fileName] = out
         except Exception as e:
-            print(f"Request failed: {e}")
+            print(f"Failed to add file with path: " + filePath)
+            raise e
 
     def clearEmbeds(self) -> None:
         self.data['embeds'] = []
@@ -120,10 +119,10 @@ class DiscordWebhook:
     def getFiltered(self) -> Dict[str, Any]: # Returns data after filtering for empty values
         return {k: v for k, v in self.data.items() if v}
     
-    def execute(self, max_retries=5) -> bool:
+    def execute(self, max_retries=5) -> int:
         """
         Returns:
-            204 for success
+            204 for success\n
             429 for rate limit
         """
         if not self.data['embeds'] and not self.data['content'] and not self.files:
@@ -140,7 +139,7 @@ class DiscordWebhook:
                 print(f"Request failed: {e}")
             if res.status_code == 429:
                 retries += 1
-                print(f"Rate limit reached, retrying request after waiting {2*retries} seconds")
-                time.sleep(2 * retries)  # Wait for a second before retrying
+                print(f"[Rate limited] Retrying request after waiting {2*retries} seconds")
+                time.sleep(2 * retries)
         return res.status_code
             
