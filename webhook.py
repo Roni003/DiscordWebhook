@@ -1,6 +1,7 @@
 from typing import Any, Dict, Self
 import os
 import requests
+import time
 
 class EmbedBuilder:
     def __init__(self) -> None:
@@ -118,15 +119,28 @@ class DiscordWebhook:
         
     def getFiltered(self) -> Dict[str, Any]: # Returns data after filtering for empty values
         return {k: v for k, v in self.data.items() if v}
-
-    def execute(self) -> bool:
+    
+    def execute(self, max_retries=5) -> bool:
+        """
+        Returns:
+            204 for success
+            429 for rate limit
+        """
         if not self.data['embeds'] and not self.data['content'] and not self.files:
             raise Exception("Request requires a content, embed or file field")
-
-        try:
-            res = requests.post(self.url, json=self.getFiltered(), files=self.files)
-            res.raise_for_status()
-            return True
-        except requests.exceptions.RequestException as e:
-            print(f"Request failed: {e}")
-            return False
+    
+        retries = 0
+        while retries < max_retries:
+            try:
+                res = requests.post(self.url, json=self.getFiltered(), files=self.files)
+                res.raise_for_status()
+                if res.status_code != 429:
+                    return res.status_code # Return on success
+            except requests.exceptions.RequestException as e:
+                print(f"Request failed: {e}")
+            if res.status_code == 429:
+                retries += 1
+                print(f"Rate limit reached, retrying request after waiting {2*retries} seconds")
+                time.sleep(2 * retries)  # Wait for a second before retrying
+        return res.status_code
+            
